@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Healthcare Detector</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: white;
+      color: #111;
+      scroll-behavior: smooth;
+    }
+
+    header {
+      text-align: center;
+      padding: 60px 20px;
+      background: linear-gradient(135deg, #86c6f4, #b9f1cc);
+      border-bottom: 4px solid #0b3954;
+    }
+
+    header h1 {
+      font-size: 3rem;
+      font-weight: bold;
+      margin-bottom: 15px;
+      color: #0b3954;
+    }
+
+    header p {
+      font-size: 1.2rem;
+      color: #333;
+      max-width: 700px;
+      margin: auto;
+      line-height: 1.6;
+    }
+
+    .btn-start {
+      display: inline-block;
+      margin-top: 25px;
+      padding: 12px 28px;
+      background-color: #0b3954;
+      color: white;
+      text-decoration: none;
+      font-size: 1.1rem;
+      border-radius: 25px;
+      transition: 0.3s;
+    }
+
+    .btn-start:hover {
+      background-color: #092f44;
+    }
+
+    .about {
+      padding: 60px 20px;
+      text-align: center;
+      background: #f8f8f8;
+    }
+
+    .about h2 {
+      font-size: 2.2rem;
+      margin-bottom: 20px;
+      color: #0b3954;
+    }
+
+    .dev-container {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 40px;
+      margin-top: 40px;
+    }
+
+    .developer {
+      width: 260px;
+      background-color: white;
+      border-radius: 20px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      text-align: center;
+      transition: transform 0.3s;
+    }
+
+    .developer:hover {
+      transform: translateY(-5px);
+    }
+
+    .developer img {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 15px;
+      border: 3px solid #0b3954;
+    }
+
+    .developer h3 {
+      margin-bottom: 8px;
+      color: #0b3954;
+    }
+
+    footer {
+      text-align: center;
+      padding: 25px;
+      background: #0b3954;
+      color: white;
+      margin-top: 40px;
+    }
+
+    footer p {
+      margin: 8px 0;
+    }
+
+    @media (max-width: 700px) {
+      header h1 { font-size: 2rem; }
+      header p { font-size: 1rem; }
+      .developer { width: 80%; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>AI Healthcare Checkup Detector</h1>
+    <p>
+      Welcome to our AI-powered health assessment tool.  
+      Answer a few simple questions to estimate your chances of  
+      <b>Anaemia</b>, <b>Diabetes</b>, <b>Dengue</b>, <b>Chikungunya</b>, and <b>Tuberculosis</b>.  
+      Get helpful reviews, home remedies, and doctor consultation advice instantly.
+    </p>
+    <a href="questionnaire.html" class="btn-start">Start the Questionnaire</a>
+  </header>
+
+  <section class="about" id="about">
+    <h2>Know About Your Developers</h2>
+    <div class="dev-container">
+      <div class="developer">
+        <img src="paramjyoti.jpeg">
+        <h3>Paramjyoti Das</h3>
+        <p>Class 11B, PM SHRI Kendriya Vidyalaya Silchar<br>
+        Frontend Developer & AI Model Designer</p>
+      </div>
+
+      <div class="developer">
+        <img src="swarnajyoti.jpeg">
+        <h3>Swarnajyoti Das</h3>
+        <p>Class 11B, PM SHRI Kendriya Vidyalaya Silchar<br>
+        Research Analyst & Concept Designer</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p><b>Message from the Developers:</b></p>
+    <p>
+      “We built this platform to help students and families check their health risks
+      easily using AI. Remember — it’s just an initial checkup, not a replacement
+      for real medical advice.”
+    </p>
+    <p>© 2025 Paramjyoti & Swarnajyoti | PM SHRI KVS Silchar</p>
+  </footer>
+</body>
+</html>

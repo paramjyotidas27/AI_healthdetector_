@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Health Questionnaire</title>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background-color: #f5faff;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background: #007bff;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0;
+    }
+
+    form {
+      max-width: 800px;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      margin: 40px auto;
+    }
+
+    label {
+      display: block;
+      font-weight: 500;
+      margin-top: 15px;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1em;
+    }
+
+    button {
+      margin-top: 25px;
+      padding: 12px 25px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #result {
+      max-width: 800px;
+      background: #eaf3ff;
+      margin: 40px auto;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .disease {
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 10px;
+      margin-bottom: 15px;
+    }
+
+    .disease:last-child {
+      border-bottom: none;
+    }
+
+    h2, h3 {
+      color: #333;
+    }
+
+    .low { color: green; }
+    .medium { color: orange; }
+    .high { color: red; }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>🩺 AI Health Check-up Questionnaire</h1>
+    <p>Answer the questions honestly and get your instant AI health analysis.</p>
+  </header>
+
+  <form id="healthForm">
+    <label>Age:</label>
+    <input type="number" id="age" min="5" max="120" required />
+
+    <label>Gender:</label>
+    <select id="gender" required>
+      <option value="">Select</option>
+      <option>Male</option>
+      <option>Female</option>
+      <option>Other</option>
+    </select>
+
+    <label>1. Do you often feel tired or weak?</label>
+    <select id="tired"><option>No</option><option>Yes</option></select>
+
+    <label>2. Do you experience frequent urination?</label>
+    <select id="urine"><option>No</option><option>Yes</option></select>
+
+    <label>3. Do you get thirsty frequently?</label>
+    <select id="thirst"><option>No</option><option>Yes</option></select>
+
+    <label>4. Do you have low appetite?</label>
+    <select id="appetite"><option>No</option><option>Yes</option></select>
+
+    <label>5. Do you feel dizzy or light-headed?</label>
+    <select id="dizzy"><option>No</option><option>Yes</option></select>
+
+    <label>6. Do you have pale skin or lips?</label>
+    <select id="pale"><option>No</option><option>Yes</option></select>
+
+    <label>7. Do you experience joint or muscle pain?</label>
+    <select id="pain"><option>No</option><option>Yes</option></select>
+
+    <label>8. Do you have fever lasting more than 3 days?</label>
+    <select id="fever"><option>No</option><option>Yes</option></select>
+
+    <label>9. Any rashes or red patches on skin?</label>
+    <select id="rash"><option>No</option><option>Yes</option></select>
+
+    <label>10. Do you have cough lasting more than 2 weeks?</label>
+    <select id="cough"><option>No</option><option>Yes</option></select>
+
+    <label>11. Have you lost weight recently without trying?</label>
+    <select id="weightloss"><option>No</option><option>Yes</option></select>
+
+    <label>12. Any swelling in legs or ankles?</label>
+    <select id="swelling"><option>No</option><option>Yes</option></select>
+
+    <label>13. Do you experience night sweats?</label>
+    <select id="sweats"><option>No</option><option>Yes</option></select>
+
+    <label>14. Any pain behind eyes or headache?</label>
+    <select id="headache"><option>No</option><option>Yes</option></select>
+
+    <label>15. Any bleeding gums or nosebleeds?</label>
+    <select id="bleed"><option>No</option><option>Yes</option></select>
+
+    <button type="button" onclick="calculateDisease()">Get My Health Report</button>
+  </form>
+
+  <div id="result" style="display:none;"></div>
+
+  <script>
+    function calculateDisease() {
+      const s = {};
+      document.querySelectorAll("select").forEach(sel => {
+        s[sel.id] = sel.value === "Yes";
+      });
+
+      let diabetes = 0, anaemia = 0, dengue = 0, chik = 0, tb = 0;
+
+      // Diabetes
+      if (s.urine) diabetes += 25;
+      if (s.thirst) diabetes += 25;
+      if (s.tired) diabetes += 15;
+      if (s.weightloss) diabetes += 20;
+
+      // Anaemia
+      if (s.pale) anaemia += 30;
+      if (s.dizzy) anaemia += 20;
+      if (s.tired) anaemia += 15;
+      if (s.appetite) anaemia += 10;
+
+      // Dengue
+      if (s.fever) dengue += 25;
+      if (s.rash) dengue += 25;
+      if (s.pain) dengue += 20;
+      if (s.headache) dengue += 15;
+
+      // Chikungunya
+      if (s.fever) chik += 20;
+      if (s.pain) chik += 25;
+      if (s.headache) chik += 15;
+      if (s.rash) chik += 10;
+
+      // Tuberculosis
+      if (s.cough) tb += 30;
+      if (s.weightloss) tb += 20;
+      if (s.sweats) tb += 20;
+      if (s.fever) tb += 10;
+
+      const diseases = [
+        { name: "Diabetes", value: diabetes },
+        { name: "Anaemia", value: anaemia },
+        { name: "Dengue", value: dengue },
+        { name: "Chikungunya", value: chik },
+        { name: "Tuberculosis", value: tb }
+      ];
+
+      let html = "<h2>🧠 AI Medical Review Summary</h2>";
+      diseases.forEach(d => {
+        let desc, remedy, cls;
+        if (d.value < 30) {
+          desc = `Low chances of ${d.name}. You seem healthy but should maintain a good lifestyle and hydration.`;
+          remedy = `Home Tip: Drink tulsi-ginger water, add fruits & green vegetables to your diet.`;
+          cls = "low";
+        } else if (d.value < 60) {
+          desc = `Moderate chances of ${d.name}. Some symptoms are visible; take rest and watch for changes.`;
+          remedy = `Medicine Tip: Paracetamol or vitamin supplements may help (if advised by a doctor).`;
+          cls = "medium";
+        } else {
+          desc = `High chance of ${d.name}! Symptoms match significantly — please consult a doctor immediately.`;
+          remedy = `Immediate Step: Avoid self-medication, drink warm fluids, and visit a clinic for tests.`;
+          cls = "high";
+        }
+        html += `
+          <div class="disease">
+            <h3 class="${cls}">${d.name} — ${d.value}% chance</h3>
+            <p><b>AI Review:</b> ${desc}</p>
+            <p><b>Suggested Remedy:</b> ${remedy}</p>
+          </div>`;
+      });
+
+      const res = document.getElementById("result");
+      res.innerHTML = html;
+      res.style.display = "block";
+      window.scrollTo({ top: res.offsetTop, behavior: "smooth" });
+    }
+  </script>
+</body>
+</html>
