@@ -3,161 +3,278 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Healthcare Detector</title>
+  <title>AI Health Detector | Home</title>
   <style>
-    body {
-      font-family: 'Poppins', sans-serif;
+    * {
       margin: 0;
       padding: 0;
-      background-color: white;
-      color: #111;
-      scroll-behavior: smooth;
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
+
+    body {
+      background: #f9fbff;
+      color: #222;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
 
     header {
+      background: linear-gradient(135deg, #007bff, #66b3ff);
+      color: white;
       text-align: center;
-      padding: 60px 20px;
-      background: linear-gradient(135deg, #86c6f4, #b9f1cc);
-      border-bottom: 4px solid #0b3954;
+      padding: 60px 20px 40px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+      animation: fadeIn 1s ease-in-out;
+      position: relative;
+      overflow: hidden;
     }
 
     header h1 {
-      font-size: 3rem;
-      font-weight: bold;
-      margin-bottom: 15px;
-      color: #0b3954;
+      font-size: 2.8em;
+      font-weight: 700;
+      animation: floatUp 2s ease-in-out forwards;
     }
 
     header p {
-      font-size: 1.2rem;
-      color: #333;
-      max-width: 700px;
-      margin: auto;
-      line-height: 1.6;
+      font-size: 1.1em;
+      color: #e3f2ff;
+      margin-top: 10px;
+      opacity: 0;
+      animation: floatUp 2.5s ease-in-out forwards;
+      animation-delay: 0.3s;
     }
 
-    .btn-start {
-      display: inline-block;
-      margin-top: 25px;
-      padding: 12px 28px;
-      background-color: #0b3954;
-      color: white;
-      text-decoration: none;
-      font-size: 1.1rem;
-      border-radius: 25px;
-      transition: 0.3s;
-    }
-
-    .btn-start:hover {
-      background-color: #092f44;
-    }
-
-    .about {
-      padding: 60px 20px;
-      text-align: center;
-      background: #f8f8f8;
-    }
-
-    .about h2 {
-      font-size: 2.2rem;
-      margin-bottom: 20px;
-      color: #0b3954;
-    }
-
-    .dev-container {
+    nav {
       display: flex;
       justify-content: center;
       flex-wrap: wrap;
-      gap: 40px;
-      margin-top: 40px;
+      gap: 20px;
+      margin-top: 25px;
+      animation: floatUp 2.5s ease-in-out forwards;
+      animation-delay: 0.6s;
+      opacity: 0;
     }
 
-    .developer {
-      width: 260px;
-      background-color: white;
-      border-radius: 20px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      padding: 20px;
+    nav a {
+      text-decoration: none;
+      background: white;
+      color: #007bff;
+      border: 2px solid #007bff;
+      padding: 12px 25px;
+      border-radius: 30px;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+
+    nav a:hover {
+      background: #007bff;
+      color: white;
+      transform: translateY(-3px);
+      box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+    }
+
+    .intro {
+      background: #eef6ff;
+      border-left: 6px solid #007bff;
+      border-radius: 10px;
+      width: 85%;
+      max-width: 900px;
+      margin: 50px auto 20px;
+      padding: 30px 25px;
+      box-shadow: 0 3px 15px rgba(0, 0, 0, 0.05);
+      animation: fadeUp 1.3s ease-in-out;
+    }
+
+    .intro h2 {
+      color: #007bff;
+      font-size: 1.8em;
+      margin-bottom: 10px;
       text-align: center;
-      transition: transform 0.3s;
     }
 
-    .developer:hover {
+    .intro p {
+      color: #003366;
+      font-size: 1.05em;
+      line-height: 1.7em;
+      text-align: justify;
+    }
+
+    .developers {
+      background: #e9f4ff;
+      margin: 50px auto;
+      padding: 40px 20px;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 900px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .developers h2 {
+      color: #007bff;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .dev-cards {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 30px;
+    }
+
+    .dev {
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      width: 220px;
+      text-align: center;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+      transition: 0.3s;
+    }
+
+    .dev:hover {
       transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0, 123, 255, 0.2);
     }
 
-    .developer img {
-      width: 150px;
-      height: 150px;
+    .dev img {
+      width: 120px;
+      height: 120px;
       border-radius: 50%;
+      border: 3px solid #007bff;
+      margin-bottom: 10px;
       object-fit: cover;
-      margin-bottom: 15px;
-      border: 3px solid #0b3954;
     }
 
-    .developer h3 {
-      margin-bottom: 8px;
-      color: #0b3954;
+    .message {
+      background: #f0f7ff;
+      margin: 50px auto;
+      padding: 40px 20px;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 800px;
+      font-size: 1.1em;
+      color: #003366;
+      line-height: 1.6em;
     }
 
     footer {
-      text-align: center;
-      padding: 25px;
-      background: #0b3954;
+      background: #007bff;
       color: white;
-      margin-top: 40px;
+      text-align: center;
+      padding: 20px 10px;
+      font-size: 0.95em;
+      margin-top: 50px;
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
     }
 
-    footer p {
-      margin: 8px 0;
+    /* Animations */
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
-    @media (max-width: 700px) {
-      header h1 { font-size: 2rem; }
-      header p { font-size: 1rem; }
-      .developer { width: 80%; }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes floatUp {
+      0% {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 768px) {
+      header h1 {
+        font-size: 2em;
+      }
+      .dev {
+        width: 180px;
+      }
+      .intro {
+        width: 92%;
+        padding: 25px;
+      }
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>AI Healthcare Checkup Detector</h1>
-    <p>
-      Welcome to our AI-powered health assessment tool.  
-      Answer a few simple questions to estimate your chances of  
-      <b>Anaemia</b>, <b>Diabetes</b>, <b>Dengue</b>, <b>Chikungunya</b>, and <b>Tuberculosis</b>.  
-      Get helpful reviews, home remedies, and doctor consultation advice instantly.
-    </p>
-    <a href="questionnaire.html" class="btn-start">Start the Questionnaire</a>
+    <h1>AI Health Detector</h1>
+    <p>Smart health awareness powered by innovation and care</p>
+
+    <nav>
+      <a href="awareness.html">Awareness Page</a>
+      <a href="questionnaire.html">Health Questionnaire</a>
+      <a href="std_checker.html">STD Checker</a>
+      <a href="health.html">About Health</a>
+      <a href="expert.html">Messages from our experts</a>
+    </nav>
   </header>
 
-  <section class="about" id="about">
-    <h2>Know About Your Developers</h2>
-    <div class="dev-container">
-      <div class="developer">
-        <img src="paramjyoti.jpeg">
-        <h3>Paramjyoti Das</h3>
-        <p>Class 11B, PM SHRI Kendriya Vidyalaya Silchar<br>
-        Frontend Developer & AI Model Designer</p>
-      </div>
+  <section class="intro">
+    <h2>About the Project</h2>
+    <p>
+      The <b>AI Health Detector</b> is an initiative designed to bridge the gap between health awareness and technology.  
+      It aims to empower users with accessible knowledge about diseases — especially <b>Sexually Transmitted Diseases (STDs)</b> and other common infections — in an easy, informative, and interactive way.  
+      This project helps individuals make more informed decisions about their well-being through AI-supported awareness tools and health questionnaires.  
+      <br><br>
+      Our objective is to <b>educate, prevent, and protect</b>. By providing simplified, verified information and smart detection interfaces,  
+      we hope to reduce misinformation, increase early detection awareness, and build a digitally conscious health community.  
+      <br><br>
+      Together, let's create a world where <b>knowledge and awareness</b> lead to healthier choices and a safer tomorrow.
+    </p>
+  </section>
 
-      <div class="developer">
-        <img src="swarnajyoti.jpeg">
+  <section class="developers">
+    <h2>Know About Your Developers</h2>
+    <div class="dev-cards">
+      <div class="dev">
+        <img src="paramjyoti.jpeg" alt="Paramjyoti Das">
+        <h3>Paramjyoti Das</h3>
+        <p>PM SHRI KV Silchar </p>
+        <p>Developer & AI Model Designer</p>
+      </div>
+      <div class="dev">
+        <img src="swarnajyoti.jpeg" alt="Swarnajyoti Das">
         <h3>Swarnajyoti Das</h3>
-        <p>Class 11B, PM SHRI Kendriya Vidyalaya Silchar<br>
-        Research Analyst & Concept Designer</p>
+        <p>PM SHRI KV Silchar Student</p>
+        <p>Project & Concept Designer</p>
       </div>
     </div>
   </section>
 
-  <footer>
-    <p><b>Message from the Developers:</b></p>
+  <section class="message">
+    <h2 style="color:#007bff;">Message from Developers</h2>
     <p>
-      “We built this platform to help students and families check their health risks
-      easily using AI. Remember — it’s just an initial checkup, not a replacement
-      for real medical advice.”
+      Welcome to the AI Health Detector.  
+      We built this platform to spread awareness and spark curiosity about health issues that often go undiscussed.  
+      From education to prevention — every feature here is designed to help you stay informed and proactive.  
+      Our hope is to make reliable health knowledge available to everyone, anytime, anywhere.
     </p>
-    <p>© 2025 Paramjyoti & Swarnajyoti | PM SHRI KVS Silchar</p>
+  </section>
+
+  <footer>
+    © 2025 AI Health Detector | Designed by PM SHRI KV Silchar Students
   </footer>
 </body>
 </html>
