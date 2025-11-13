@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>AI Health Detector — STD Checker </title>
+<title>AI Health Detector — STD Checker</title>
 <style>
 :root{
   --bg:linear-gradient(180deg,#f4f8ff 0%, #eef6ff 100%);
@@ -49,18 +49,12 @@ select{appearance:none}
 .urgent{display:none;margin-top:12px;background:#fff0f0;border-left:4px solid var(--danger);padding:12px;border-radius:10px;color:var(--danger);font-weight:800}
 .links{margin-top:12px;font-size:14px}
 .links a{color:var(--blue1);text-decoration:none;font-weight:700}
-
-/* spinner overlay centered */
 .spinner-overlay{display:none;position:fixed;inset:0;background:rgba(2,6,23,0.45);z-index:1500;align-items:center;justify-content:center}
 .spinner-card{background:linear-gradient(180deg,#fff,#fbfdff);padding:16px;border-radius:12px;display:flex;gap:12px;align-items:center;box-shadow:0 14px 40px rgba(2,6,23,0.35)}
 .spinner{width:44px;height:44px;border-radius:50%;border:5px solid #e9f6ff;border-top-color:var(--blue1);animation:spin 1s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-
-/* toast */
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:26px;background:#111;color:white;padding:12px 16px;border-radius:10px;opacity:0;transition:opacity .26s,transform .26s;z-index:1600}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(-6px)}
-
-/* feedback popup (glass) */
 .popup{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(2,6,23,0.35);backdrop-filter:blur(4px);z-index:1600}
 .modal{background:rgba(255,255,255,0.95);padding:16px;border-radius:12px;width:92%;max-width:520px;box-shadow:0 12px 40px rgba(2,6,23,0.28)}
 .modal h3{color:var(--blue1);margin:0 0 8px}
@@ -69,6 +63,8 @@ select{appearance:none}
 .footer{margin-top:20px;text-align:center;color:var(--muted);font-size:13px}
 .fade-in{animation:fadeIn .5s ease both}
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.error-field{outline:2px solid rgba(231,76,60,0.18);box-shadow:0 6px 18px rgba(231,76,60,0.06)}
+.warning-banner{background:#fff6f6;border-left:6px solid var(--danger);padding:12px;border-radius:10px;color:var(--danger);font-weight:800;margin-top:12px}
 </style>
 </head>
 <body>
@@ -88,7 +84,7 @@ select{appearance:none}
     <div class="row">
       <div>
         <label>Age</label>
-        <input id="age" type="number" min="13" max="120" placeholder="e.g., 24"/>
+        <input id="age" type="number" min="1" max="120" placeholder="e.g., 24"/>
       </div>
       <div>
         <label>Gender</label>
@@ -107,7 +103,8 @@ select{appearance:none}
       <option>Maharashtra</option><option>Delhi</option><option>Uttar Pradesh</option>
       <option>West Bengal</option><option>Assam</option><option>Karnataka</option>
       <option>Tamil Nadu</option><option>Gujarat</option><option>Kerala</option>
-      <option>Rajasthan</option><option>Bihar</option><option>Other</option>
+      <option>Rajasthan</option><option>Bihar</option><option>Mizoram</option>
+      <option>Manipur</option><option>Nagaland</option><option>Other</option>
     </select>
 
     <div style="height:10px"></div>
@@ -199,9 +196,9 @@ select{appearance:none}
       <div class="links">
         <div style="margin-top:12px"><strong>Consultation & resources</strong></div>
         <div style="margin-top:8px">
-          HIV/Treatment & testing: <a href="https://nvf.in" target="_blank">National HIV services</a><br>
-          STIs info & testing: <a href="https://main.mohfw.gov.in" target="_blank">Ministry of Health</a><br>
-          Local: <a href="https://smcassam.ac.in" target="_blank">Silchar Medical College (SMCH)</a> — Phone: <strong>+91 3842-246100</strong>
+          HIV/Treatment & testing: <a href="https://nvf.in" target="_blank" rel="noopener">National HIV services</a><br>
+          STIs info & testing: <a href="https://main.mohfw.gov.in" target="_blank" rel="noopener">Ministry of Health</a><br>
+          Local: <a href="https://smcassam.ac.in" target="_blank" rel="noopener">Silchar Medical College (SMCH)</a> — Phone: <strong>+91 3842-246100</strong>
         </div>
       </div>
 
@@ -314,59 +311,73 @@ gaugeBox.appendChild(svg);
 function showToast(msg){
   const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3200);
 }
-function anyMeaningfulInput(){
-  // check main fields
-  const ids = ['name','age','gender','region','partnersCount','protection','lastSexDays','prevStd','partnerStd','injection','smoke','alcohol','chronic'];
-  for(const id of ids){
-    const el = document.getElementById(id);
-    if(!el) continue;
-    if(el.tagName === 'SELECT' || el.tagName === 'INPUT' || el.tagName === 'TEXTAREA'){
-      const v = String(el.value||'').trim();
-      if(v !== '' && v !== '0') return true;
-    }
-  }
-  // check partners numeric
-  const p = Number(document.getElementById('partnersCount').innerText || 0);
-  if(p>0) return true;
-  // symptoms
-  for(const s of symptomList){
-    const el = document.getElementById(s.id);
-    if(el && el.value && el.value !== '') return true;
-  }
-  return false;
-}
+
+function highlightField(el){ if(!el) return; el.classList.add('error-field'); setTimeout(()=>el.classList.remove('error-field'),2600); }
 
 /* partners counter */
 let partners = 0;
 document.getElementById('partnersPlus').addEventListener('click', ()=>{ partners++; document.getElementById('partnersCount').innerText = partners; });
 document.getElementById('partnersMinus').addEventListener('click', ()=>{ partners = Math.max(0, partners-1); document.getElementById('partnersCount').innerText = partners; });
 
+/* validation: ensure all MCQs/selects answered (except name) */
+function validateAll(){
+  // collect all selects within form
+  const selects = Array.from(document.querySelectorAll('#formCard select'));
+  const inputs = Array.from(document.querySelectorAll('#formCard input'));
+  let ok = true;
+  for(const s of selects){
+    if(s.id === 'gender' || s.id === 'region' || s.id === 'protection' || s.id === 'prevStd' || s.id === 'partnerStd' || s.id === 'injection' || s.id === 'smoke' || s.id === 'alcohol' || s.id === 'chronic' || s.id === 'pregnantStatus'){
+      if(!s.value){ highlightField(s); ok=false; }
+    }
+    // symptoms must be explicitly yes/no
+    if(s.id && s.id.startsWith('sym_')){
+      if(!s.value){ highlightField(s); ok=false; }
+    }
+  }
+  // age must be provided
+  const ageEl = document.getElementById('age');
+  if(!ageEl.value || Number(ageEl.value) <= 0){ highlightField(ageEl); ok=false; }
+  return ok;
+}
+
 /* spinner and analyze behavior */
 const spinner = document.getElementById('spinnerOverlay');
 const analyzeBtn = document.getElementById('analyzeBtn');
 analyzeBtn.addEventListener('click', async (e)=>{
   e.preventDefault();
-  // hide previous results
   document.getElementById('urgent').style.display = 'none';
-  // check inputs
-  if(!anyMeaningfulInput()){
-    showToast('Please answer at least one question to analyze 💙');
+  // validate
+  if(!validateAll()){
+    showToast('Please answer all questions (select Yes/No where required).');
     return;
   }
+  // under 18 check
+  const ageVal = Number(document.getElementById('age').value||0);
+  if(ageVal < 18){
+    // show warning banner in aside
+    document.getElementById('overallPct').innerText = '—%';
+    document.getElementById('topLine').innerText = 'Under 18 — protected by law';
+    // show explicit warning
+    const aside = document.querySelector('.aside');
+    let warn = document.getElementById('under18Warn');
+    if(!warn){ warn = document.createElement('div'); warn.id='under18Warn'; warn.className='warning-banner'; warn.innerHTML = '⚠️ You are under 18. Sexual activity involving minors is illegal under Indian law. For more information visit the Ministry of Women and Child Development.'; aside.querySelector('.gauge-wrap').insertBefore(warn, aside.querySelector('.gauge-wrap').children[1]); }
+    showToast('Under 18 — cannot compute risk. See warning.');
+    return;
+  }
+
   // show spinner
   spinner.style.display = 'flex';
   analyzeBtn.disabled = true;
   document.getElementById('feedbackOpen').disabled = true;
-  await delay(2000); // 2s analyze vibe
+  await delay(900);
   spinner.style.display = 'none';
   computeAndShow();
-  analyzeBtn.disabled = false;
-  document.getElementById('feedbackOpen').disabled = false;
+  analyzeBtn.disabled = false; document.getElementById('feedbackOpen').disabled = false;
 });
 
 /* compute scoring and show */
 function computeAndShow(){
-  // read inputs safely
+  // read inputs
   const age = Number(document.getElementById('age').value||0);
   const gender = String(document.getElementById('gender').value||'').toLowerCase();
   const region = String(document.getElementById('region').value||'');
@@ -379,19 +390,19 @@ function computeAndShow(){
   const smoke = String(document.getElementById('smoke').value||'');
   const alcohol = String(document.getElementById('alcohol').value||'');
   const chronic = String(document.getElementById('chronic').value||'');
+  const pregnant = document.getElementById('pregnantStatus') ? String(document.getElementById('pregnantStatus').value||'') : '';
 
   // read symptoms boolean map
   const S = {};
   symptomList.forEach(s => {
     const el = document.getElementById(s.id);
-    S[s.id] = !!(el && el.value === 'yes');
+    S[s.id] = (el && el.value === 'yes');
   });
 
   // base raw scores per STD
-  let raw = {hiv:0, gonorrhea:0, syphilis:0, chlamydia:0, herpes:0};
+  let raw = {hiv:1, gonorrhea:1, syphilis:1, chlamydia:1, herpes:1};
 
-  // symptom weights (intuition-based)
-  // Map each symptom to contributions for each STD
+  // symptom weights (same as original) — deterministic
   const weightMap = {
     sym_urg_pain: {hiv:2, gonorrhea:10, syphilis:3, chlamydia:8, herpes:1},
     sym_discharge: {hiv:1, gonorrhea:12, syphilis:2, chlamydia:10, herpes:1},
@@ -418,111 +429,134 @@ function computeAndShow(){
     }
   }
 
-  // sexual behavior modifiers
-  raw.hiv += partnersCount * 3;
-  raw.gonorrhea += partnersCount * 2;
-  raw.chlamydia += partnersCount * 2;
-  if(protection === 'never'){ for(const k in raw) raw[k] += 6; }
-  else if(protection === 'sometimes'){ for(const k in raw) raw[k] += 3; }
+  // sexual behavior modifiers (partners effect)
+  // partners weight: 0 -> 0, 1-2 -> +2 each, 3-5 -> +3 each, >5 -> +4 each
+  if(partnersCount > 0){
+    const perPartner = partnersCount <=2 ? 2 : (partnersCount <=5 ? 3 : 4);
+    raw.hiv += partnersCount * perPartner;
+    raw.gonorrhea += partnersCount * perPartner;
+    raw.chlamydia += partnersCount * perPartner;
+  }
 
-  // recent risky exposure increases HIV/Gonorrhea/Chlamydia a bit
+  // protection
+  if(protection === 'never'){ for(const k in raw) raw[k] += 8; }
+  else if(protection === 'sometimes'){ for(const k in raw) raw[k] += 4; }
+
+  // recent risky exposure increases
   if(lastSexDays <= 7) { raw.hiv += 6; raw.gonorrhea +=4; raw.chlamydia +=4; }
 
   // partner STD knowledge
-  if(partnerStd === 'yes'){ for(const k in raw) raw[k] += 8; }
+  if(partnerStd === 'yes'){ for(const k in raw) raw[k] += 10; }
 
   // previous STD to same disease (raise its estimate)
-  if(prevStd === 'yes'){ raw.hiv += 6; raw.gonorrhea +=6; raw.syphilis +=6; }
+  if(prevStd === 'yes'){ raw.hiv += 8; raw.gonorrhea +=8; raw.syphilis +=8; }
 
   // injection drug use strongly raises HIV risk
-  if(injection === 'yes'){ raw.hiv += 14; }
+  if(injection === 'yes'){ raw.hiv += 18; }
 
-  // smoking/alcohol mild uplift for complications
+  // smoking/alcohol mild uplift
   if(smoke === 'yes'){ raw.gonorrhea += 2; raw.syphilis +=2; }
   if(alcohol === 'yes'){ raw.hiv += 2; }
 
-  // chronic disease minor adjustment
+  // chronic disease
   if(chronic === 'diabetes'){ raw.hiv += 3; raw.syphilis +=2; }
 
-  // demographic & region modifiers (small)
-  if(['Maharashtra','Delhi','Uttar Pradesh'].includes(region)) { raw.gonorrhea += 3; raw.hiv += 2; }
-  else if(['West Bengal','Karnataka','Tamil Nadu'].includes(region)) { raw.chlamydia += 2; raw.gonorrhea += 2; }
+  // pregnancy (female) slight uplift
+  if(pregnant === 'yes' && gender === 'female'){ for(const k in raw) raw[k] += 1; }
 
-  // age factor
-  if(age >= 15 && age <=30) { raw.chlamydia += 3; raw.gonorrhea += 3; }
+  // region effects (deterministic from prevalence insights)
+  const high2 = ['Mizoram','Manipur','Nagaland'];
+  const high1 = ['Delhi','Maharashtra'];
+  const low1 = ['Assam','Kerala','Himachal Pradesh'];
+  if(high2.includes(region)) { for(const k in raw) raw[k] += 6; } // stronger bump
+  else if(high1.includes(region)) { for(const k in raw) raw[k] += 3; }
+  else if(low1.includes(region)) { for(const k in raw) raw[k] = Math.max(0, raw[k]-1); }
 
-  // baseline tiny noise to avoid zero-all
-  for(const k in raw) raw[k] += 1 + Math.random()*2;
+  // age factor: young adults higher
+  if(age >=18 && age <=25){ for(const k in raw) raw[k] += 6; }
+  else if(age >=26 && age <=35){ for(const k in raw) raw[k] += 4; }
+  else if(age >=36 && age <=50){ for(const k in raw) raw[k] += 2; }
 
-  // convert raw to relative percent
+  // gender small adjustments
+  if(gender === 'male'){ raw.gonorrhea += 2; }
+  else if(gender === 'female'){ raw.chlamydia += 3; }
+  else if(gender === 'other'){ for(const k in raw) raw[k] += 2; }
+
+  // ensure deterministic integer
+  for(const k in raw) raw[k] = Math.max(0, Math.round(raw[k]));
+
+  // convert raw to relative percent (unnormalized)
   const sumRaw = Object.values(raw).reduce((a,b)=>a+b,0) || 1;
   let rel = {};
-  for(const k in raw) rel[k] = Math.round((raw[k]/sumRaw)*100);
+  for(const k in raw) rel[k] = (raw[k]/sumRaw)*100;
 
-  // overall factor based on symptom count and partners
+  // overallFactor based on symptom count and partners
   const symptomCount = Object.values(S).filter(Boolean).length;
-  let overallFactor = Math.min(1.6, 0.6 + symptomCount*0.08 + (partnersCount>2?0.06:0) + (protection==='never'?0.04:0));
+  let overallFactor = 0.55 + Math.min(0.9, symptomCount*0.06 + (partnersCount>2?0.06:0) + (protection==='never'?0.04:0));
+  // boost for region/age/gender influence
+  if(high2.includes(region)) overallFactor += 0.03;
+  if(age>=18 && age<=25) overallFactor += 0.03;
+  if(gender==='other') overallFactor += 0.02;
 
-  for(const k in rel) rel[k] = Math.round(rel[k] * overallFactor);
+  for(const k in rel) rel[k] = rel[k] * overallFactor;
 
-  // scale down so none exceed cap (85)
+  // scale so none exceed cap (85)
   const cap = Number(getComputedStyle(document.documentElement).getPropertyValue('--cap')) || 85;
   const currentMax = Math.max(...Object.values(rel));
   const scale = currentMax === 0 ? 1 : Math.min(1, cap / currentMax);
   for(const k in rel) rel[k] = Math.round(rel[k] * scale);
 
-  // pregnancy note: only relevant for females and not an STD but user wanted pregnancy logic earlier — we do NOT treat pregnancy as STD.
-  let pregnancyNote = '';
-  if(gender === 'female' && document.getElementById('pregnantStatus')){
-    const preg = document.getElementById('pregnantStatus') ? document.getElementById('pregnantStatus').value : '';
-    if(preg === 'yes') pregnancyNote = 'Pregnancy suspected — consult obstetrics in parallel.';
-  }
-
-  // compute overall as weighted average of STD probabilities + symptom boost
-  const avg = Math.round(Object.values(rel).reduce((a,b)=>a+b,0) / Object.keys(rel).length);
+  // compute overall as weighted average + symptom boost
+  const avg = Object.values(rel).reduce((a,b)=>a+b,0) / Object.keys(rel).length;
   let overall = Math.round(avg + Math.min(12, symptomCount*2 + (partnersCount>3?4:0)));
   if(overall > cap) overall = cap;
   if(overall < 3) overall = 3;
 
-  // update UI: gauge animate, cards, urgent, topLine
+  // update UI
   animateGauge(overall);
   document.getElementById('overallPct').innerText = overall + '%';
   document.getElementById('topLine').innerText = `Most likely: ${getTopStd(rel)}`;
 
-  // update each STD card
+  // disease breakdown — allocate shares proportional to rel, but cap sum at overall
+  const relSum = Object.values(rel).reduce((a,b)=>a+b,0) || 1;
+  let diseasePerc = {};
+  let allocated = 0;
+  stds.forEach((s,i)=>{
+    const share = Math.round((rel[s.id]/relSum) * overall);
+    diseasePerc[s.id] = share;
+    allocated += share;
+  });
+  // adjust rounding difference
+  if(allocated > overall){
+    let diff = allocated - overall;
+    // subtract diff from largest entry(s)
+    const order = Object.keys(diseasePerc).sort((a,b)=>diseasePerc[b]-diseasePerc[a]);
+    for(let k of order){ if(diff<=0) break; const take = Math.min(diff, diseasePerc[k]); diseasePerc[k]-=take; diff-=take; }
+  } else if(allocated < overall){
+    let diff = overall - allocated;
+    const order = Object.keys(diseasePerc).sort((a,b)=>diseasePerc[b]-diseasePerc[a]);
+    for(let k of order){ if(diff<=0) break; diseasePerc[k]++; diff--; }
+  }
+
   stds.forEach(s=>{
-    const pct = rel[s.id] || 0;
+    const pct = diseasePerc[s.id] || 0;
     document.getElementById(s.id + '-pct').innerText = pct + '%';
     document.getElementById(s.id + '-fill').style.width = pct + '%';
     document.getElementById(s.id + '-note').innerText = stdNote(s.id,pct);
   });
 
-  // show urgent if any STD >= 70 or overall >= 70
+  // urgent
+  const anyHigh = Math.max(...Object.values(diseasePerc)) >= 70;
   const urgent = document.getElementById('urgent');
-  const anyHigh = Math.max(...Object.values(rel)) >= 70;
   if(overall > 70 || anyHigh) urgent.style.display = 'block'; else urgent.style.display = 'none';
 
-  // show feedback enable
+  // enable feedback
   document.getElementById('feedbackOpen').disabled = false;
-
-  // final reveal: ensure aside visible (it already is)
 }
 
 /* small utilities */
-function getTopStd(rel){
-  let top = null, max = -1;
-  for(const k in rel){ if(rel[k] > max){ max = rel[k]; top = k; } }
-  const found = stds.find(s=>s.id===top);
-  return found ? `${found.name} — ${rel[top]}%` : '—';
-}
-function stdNote(id,pct){
-  if(id==='hiv') return pct>40 ? 'Signs suggest higher HIV risk — seek immediate testing & counselling.' : 'Low–moderate HIV probability; testing recommended if exposed.';
-  if(id==='gonorrhea') return pct>40 ? 'Genital discharge or pain point to Gonorrhea — get tested & start treatment if positive.' : 'Monitor symptoms; test if persistent.';
-  if(id==='syphilis') return pct>40 ? 'Sores or rash + risk factors — test for Syphilis (RPR/VDRL).' : 'Low probability; test if suspicion persists.';
-  if(id==='chlamydia') return pct>40 ? 'Common in young adults with discharge — testing advised.' : 'Low–moderate; consider testing if symptomatic.';
-  if(id==='herpes') return pct>40 ? 'Blister-like sores point to Herpes — seek clinical advice.' : 'Low probability; observe lesions and test if needed.';
-  return '';
-}
+function getTopStd(rel){ let top=null,max=-1; for(const k in rel){ if(rel[k]>max){ max=rel[k]; top=k; }} const found = stds.find(s=>s.id===top); return found ? `${found.name} — ${rel[top]}%` : '—'; }
+function stdNote(id,pct){ if(id==='hiv') return pct>40 ? 'Signs suggest higher HIV risk — seek immediate testing & counselling.' : 'Low–moderate HIV probability; testing recommended if exposed.'; if(id==='gonorrhea') return pct>40 ? 'Genital discharge or pain point to Gonorrhea — get tested & start treatment if positive.' : 'Monitor symptoms; test if persistent.'; if(id==='syphilis') return pct>40 ? 'Sores or rash + risk factors — test for Syphilis (RPR/VDRL).' : 'Low probability; test if suspicion persists.'; if(id==='chlamydia') return pct>40 ? 'Common in young adults with discharge — testing advised.' : 'Low–moderate; consider testing if symptomatic.'; if(id==='herpes') return pct>40 ? 'Blister-like sores point to Herpes — seek clinical advice.' : 'Low probability; observe lesions and test if needed.'; return ''; }
 
 /* animate gauge */
 async function animateGauge(target){
@@ -530,14 +564,17 @@ async function animateGauge(target){
   const offsetTarget = strokeLen - (target/100)*strokeLen;
   arc.style.transition = 'stroke-dashoffset 1200ms cubic-bezier(.2,.9,.2,1)';
   arc.style.strokeDashoffset = offsetTarget;
-  // small numeric animation
+  // color change based on level
+  if(target < 30) arc.setAttribute('stroke','url(#ggradGreen)');
+  else if(target < 60) arc.setAttribute('stroke','url(#ggradOrange)');
+  else arc.setAttribute('stroke','url(#ggradRed)');
   const el = document.getElementById('overallPct');
   const start = Number(el.innerText.replace('%','')) || 0;
   const steps = 30;
   for(let i=1;i<=steps;i++){
     const v = Math.round(start + (i/steps)*(target-start));
     el.innerText = v + '%';
-    await delay( Math.round(1200/steps) );
+    await delay(Math.round(1200/steps));
   }
   el.innerText = target + '%';
 }
@@ -545,38 +582,48 @@ async function animateGauge(target){
 /* delay util */
 function delay(ms){ return new Promise(res=>setTimeout(res,ms)); }
 
-/* top-level analyze trigger already wired; add pregnantStatus input dynamically (female only) */
+/* pregnant field */
 (function wirePregnancyField(){
   const pregLabel = document.createElement('label'); pregLabel.style.marginTop = '8px';
   pregLabel.textContent = 'Are you currently pregnant or suspect pregnancy?';
   const pregSel = document.createElement('select'); pregSel.id = 'pregnantStatus';
   pregSel.innerHTML = '<option value="">Select</option><option value="no">No</option><option value="yes">Yes / Suspect</option><option value="not_sure">Not sure</option>';
-  // insert after region select
   const regionEl = document.getElementById('region');
   regionEl.parentNode.insertBefore(pregLabel, regionEl.nextSibling);
   regionEl.parentNode.insertBefore(pregSel, pregLabel.nextSibling);
-  // show/hide logic not necessary (we keep displayed), but pregnancy note used only if gender female
 })();
 
 /* feedback flows */
 document.getElementById('feedbackOpen').addEventListener('click', ()=>{ document.getElementById('feedbackPopup').style.display='flex'; document.getElementById('feedbackPopup').setAttribute('aria-hidden','false'); });
 document.getElementById('noThanks').addEventListener('click', ()=> showToast('No problem — thanks for checking. Stay safe.') );
 function closeFeedback(){ document.getElementById('feedbackPopup').style.display='none'; }
-function submitFeedback(){
-  const txt = document.getElementById('feedbackText').value.trim();
-  const store = JSON.parse(localStorage.getItem('std_feedback_v4')||'[]');
-  store.push({time:new Date().toISOString(), message:txt});
-  localStorage.setItem('std_feedback_v4', JSON.stringify(store));
-  document.getElementById('fbSaved').style.display = 'block';
-  setTimeout(()=>{ document.getElementById('feedbackPopup').style.display='none'; document.getElementById('fbSaved').style.display='none'; showToast('Thanks — feedback saved.'); }, 700);
-}
+function submitFeedback(){ const txt = document.getElementById('feedbackText').value.trim(); const store = JSON.parse(localStorage.getItem('std_feedback_v4')||'[]'); store.push({time:new Date().toISOString(), message:txt}); localStorage.setItem('std_feedback_v4', JSON.stringify(store)); document.getElementById('fbSaved').style.display = 'block'; setTimeout(()=>{ document.getElementById('feedbackPopup').style.display='none'; document.getElementById('fbSaved').style.display='none'; showToast('Thanks — feedback saved.'); }, 700); }
 
-/* initial state: disable feedback until a result */
 document.getElementById('feedbackOpen').disabled = true;
 
-/* utility: delay for initial gauge (set arc initial offset to full) */
-arc.style.strokeDashoffset = gaugeCirc;
+/* define gradient defs for gauge color switching (append to svg defs) */
+(function appendGradients(){
+  const gdefs = defs;
+  const gradGreen = document.createElementNS(svgNS,'linearGradient'); gradGreen.setAttribute('id','ggradGreen'); gradGreen.setAttribute('x1','0%'); gradGreen.setAttribute('y1','0%'); gradGreen.setAttribute('x2','100%'); gradGreen.setAttribute('y2','0%');
+  const gg1 = document.createElementNS(svgNS,'stop'); gg1.setAttribute('offset','0%'); gg1.setAttribute('stop-color','#28a745');
+  const gg2 = document.createElementNS(svgNS,'stop'); gg2.setAttribute('offset','100%'); gg2.setAttribute('stop-color','#8be58b');
+  gradGreen.appendChild(gg1); gradGreen.appendChild(gg2);
 
+  const gradOrange = document.createElementNS(svgNS,'linearGradient'); gradOrange.setAttribute('id','ggradOrange'); gradOrange.setAttribute('x1','0%'); gradOrange.setAttribute('y1','0%'); gradOrange.setAttribute('x2','100%'); gradOrange.setAttribute('y2','0%');
+  const go1 = document.createElementNS(svgNS,'stop'); go1.setAttribute('offset','0%'); go1.setAttribute('stop-color','#ffb020');
+  const go2 = document.createElementNS(svgNS,'stop'); go2.setAttribute('offset','100%'); go2.setAttribute('stop-color','#ffdd80');
+  gradOrange.appendChild(go1); gradOrange.appendChild(go2);
+
+  const gradRed = document.createElementNS(svgNS,'linearGradient'); gradRed.setAttribute('id','ggradRed'); gradRed.setAttribute('x1','0%'); gradRed.setAttribute('y1','0%'); gradRed.setAttribute('x2','100%'); gradRed.setAttribute('y2','0%');
+  const gr1 = document.createElementNS(svgNS,'stop'); gr1.setAttribute('offset','0%'); gr1.setAttribute('stop-color','#ff4d4f');
+  const gr2 = document.createElementNS(svgNS,'stop'); gr2.setAttribute('offset','100%'); gr2.setAttribute('stop-color','#ff9a9b');
+  gradRed.appendChild(gr1); gradRed.appendChild(gr2);
+
+  gdefs.appendChild(gradGreen); gdefs.appendChild(gradOrange); gdefs.appendChild(gradRed);
+})();
+
+// initialise
+arc.style.strokeDashoffset = gaugeCirc;
 </script>
 </body>
 </html>
